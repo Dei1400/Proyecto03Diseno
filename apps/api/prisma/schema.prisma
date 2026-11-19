@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Rol {
+  COMPRADOR
+  PRODUCTORA
+}
+
+// Estados del patrón State (RN-01)
+enum EstadoAsiento {
+  DISPONIBLE
+  RETENIDO
+  VENDIDO
+  BLOQUEADO
+}
+
+enum EstadoOrden {
+  PENDIENTE
+  PAGADA
+  CANCELADA
+}
+
+// Una estrategia por método (patrón Strategy)
+enum MetodoPago {
+  TARJETA
+  SINPE
+  CUOTAS
+}
+
+enum Categoria {
+  CONCIERTO
+  TEATRO
+  DEPORTE
+  FESTIVAL
+  FAMILIAR
+}
+
+enum Provincia {
+  SAN_JOSE
+  ALAJUELA
+  CARTAGO
+  HEREDIA
+  GUANACASTE
+  PUNTARENAS
+  LIMON
+}
+
+model Usuario {
+  id             Int      @id @default(autoincrement())
+  nombre         String
+  correo         String   @unique
+  contrasenaHash String   @map("contrasena_hash")
+  cedula         String
+  telefono       String
+  rol            Rol      @default(COMPRADOR)
+  creadoEn       DateTime @default(now()) @map("creado_en")
+
+  eventos           Evento[]
+  ordenes           Orden[]
+  asientosRetenidos Asiento[]
+
+  @@map("usuarios")
+}
+
+model Evento {
+  id                Int       @id @default(autoincrement())
+  productoraId      Int       @map("productora_id")
+  nombre            String
+  artista           String
+  descripcion       String
+  categoria         Categoria
+  provincia         Provincia
+  lugar             String
+  fechaHora         DateTime  @map("fecha_hora")
+  imagenUrl         String    @map("imagen_url")
+  clasificacionEdad String    @map("clasificacion_edad")
+  destacado         Boolean   @default(false)
+
+  productora Usuario @relation(fields: [productoraId], references: [id])
+  zonas      Zona[]
+  ordenes    Orden[]
+
+  @@index([categoria])
+  @@index([provincia])
+  @@index([fechaHora])
+  @@map("eventos")
+}
+
+model Zona {
+  id       Int    @id @default(autoincrement())
+  eventoId Int    @map("evento_id")
+  nombre   String
+  precio   Int // colones, sin impuestos
+
+  evento   Evento    @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  asientos Asiento[]
+
+  @@unique([eventoId, nombre])
+  @@map("zonas")
+}
+
+model Asiento {
+  id            Int           @id @default(autoincrement())
+  zonaId        Int           @map("zona_id")
+  fila          String
+  numero        Int
+  estado        EstadoAsiento @default(DISPONIBLE)
+  retenidoPorId Int?          @map("retenido_por")
+  retenidoHasta DateTime?     @map("retenido_hasta")
+  ordenId       Int?          @map("orden_id") // orden pendiente o pagada que lleva este asiento
+
+  zona        Zona     @relation(fields: [zonaId], references: [id], onDelete: Cascade)
+  retenidoPor Usuario? @relation(fields: [retenidoPorId], references: [id], onDelete: SetNull)
+  orden       Orden?   @relation(fields: [ordenId], references: [id], onDelete: SetNull)
+  boleto      Boleto?
+
+  @@unique([zonaId, fila, numero])
+  @@index([estado])
+  @@map("asientos")
+}
+
+model Orden {
+  id            Int         @id @default(autoincrement())
+  usuarioId     Int         @map("usuario_id")
+  eventoId      Int         @map("evento_id")
+  subtotal      Int
+  cargoServicio Int         @map("cargo_servicio")
+  impuestos     Int
+  total         Int
+  metodoPago    MetodoPago? @map("metodo_pago")
+  ultimos4      String?     @map("ultimos_4")
+  estado        EstadoOrden @default(PENDIENTE)
+  creadaEn      DateTime    @default(now()) @map("creada_en")
+
+  usuario  Usuario   @relation(fields: [usuarioId], references: [id])
+  evento   Evento    @relation(fields: [eventoId], references: [id])
+  asientos Asiento[]
+  boletos  Boleto[]
+
+  @@index([usuarioId])
+  @@map("ordenes")
+}
+
+model Boleto {
+  id        Int    @id @default(autoincrement())
+  ordenId   Int    @map("orden_id")
+  asientoId Int    @unique @map("asiento_id") // impide vender dos veces el mismo asiento
+  codigo    String @unique @default(uuid())
+
+  orden   Orden   @relation(fields: [ordenId], references: [id])
+  asiento Asiento @relation(fields: [asientoId], references: [id])
+
+  @@map("boletos")
+}
