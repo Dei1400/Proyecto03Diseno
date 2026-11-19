@@ -17,3 +17,6 @@ coverage/
 Thumbs.db
 *.log
 /generated/prisma
+
+# Archivos temporales de TypeScript
+*.tsbuildinfo
