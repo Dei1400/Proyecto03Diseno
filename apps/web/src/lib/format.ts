@@ -1,25 +1,13 @@
-export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('es-CR', {
-    style: 'currency',
-    currency: 'CRC',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+export function colones(monto: number): string {
+  return '₡ ' + Math.round(monto).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
-
-export function formatDate(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
+export function fecha(iso: string): string {
+  return new Intl.DateTimeFormat('es-CR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Costa_Rica',
+  }).format(new Date(iso));
 }
-
-export function formatDateTime(date: Date | string): string {
-  const d = typeof date === 'string' ? new Date(date) : date;
-  const time = d.toLocaleTimeString('es-CR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  return `${formatDate(d)} ${time}`;
+export function hora(iso: string): string {
+  return new Intl.DateTimeFormat('es-CR', {
+    hour: 'numeric', minute: '2-digit', timeZone: 'America/Costa_Rica',
+  }).format(new Date(iso));
 }
