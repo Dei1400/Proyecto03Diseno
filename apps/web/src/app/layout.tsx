@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import './globals.css';
 
 const titulo = Space_Grotesk({ subsets: ['latin'], weight: ['500', '700'], variable: '--fuente-titulo' });
@@ -17,9 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es" className={`${titulo.variable} ${texto.variable}`}>
       <body>
         <a href="#contenido" className="saltar">Saltar al contenido</a>
-        <Header />
-        <main id="contenido">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );
