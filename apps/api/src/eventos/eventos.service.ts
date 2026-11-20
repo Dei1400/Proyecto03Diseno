@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { ContextoAsiento } from '../asientos/contexto-asiento';
 import { PrismaService } from '../prisma/prisma.service';
 import { CalculadoraPrecioService } from './calculadora-precio.service';
 import { FiltrosEventosDto } from './dto/filtros-eventos.dto';
@@ -86,7 +87,14 @@ export class EventosService {
       orderBy: { precio: 'desc' },
       include: {
         asientos: {
-          select: { id: true, fila: true, numero: true, estado: true },
+          select: {
+            id: true,
+            fila: true,
+            numero: true,
+            estado: true,
+            retenidoPorId: true,
+            retenidoHasta: true,
+          },
           orderBy: [{ fila: 'asc' }, { numero: 'asc' }],
         },
       },
@@ -96,7 +104,13 @@ export class EventosService {
       id: zona.id,
       nombre: zona.nombre,
       precioFinal: this.calculadora.calcular(zona.precio).total,
-      asientos: zona.asientos,
+      // El estado lo decide el asiento (patrón State): una retención vencida sale como disponible
+      asientos: zona.asientos.map((asiento) => ({
+        id: asiento.id,
+        fila: asiento.fila,
+        numero: asiento.numero,
+        estado: new ContextoAsiento(asiento).estadoActual,
+      })),
     }));
   }
 
