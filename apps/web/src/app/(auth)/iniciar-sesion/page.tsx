@@ -69,7 +69,7 @@ export default function IniciarSesion() {
         <div style={{ marginTop: 32, textAlign: 'center', borderTop: '1px solid var(--borde)', paddingTop: 24 }}>
           <p style={{ margin: 0, fontSize: 14 }}>
             ¿No tienes cuenta?{' '}
-            <Link href="/(auth)/crear-cuenta" style={{ color: 'var(--primario)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link href="/crear-cuenta" style={{ color: 'var(--primario)', fontWeight: 600, textDecoration: 'none' }}>
               Registrarse
             </Link>
           </p>
