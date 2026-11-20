@@ -11,3 +11,8 @@ export function hora(iso: string): string {
     hour: 'numeric', minute: '2-digit', timeZone: 'America/Costa_Rica',
   }).format(new Date(iso));
 }
+export function fechaLarga(iso: string): string {
+  return new Intl.DateTimeFormat('es-CR', {
+    day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Costa_Rica',
+  }).format(new Date(iso));
+}
