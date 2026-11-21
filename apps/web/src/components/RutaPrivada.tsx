@@ -10,7 +10,7 @@ export default function RutaPrivada({ children }: { children: React.ReactNode })
   const token = useSyncExternalStore<string | null | undefined>(suscribirSesion, obtenerToken, () => undefined);
 
   useEffect(() => {
-    if (token === null) router.replace(`/iniciar-sesion?volver=${encodeURIComponent(ruta)}`);
+    if (token === null) router.replace(`/iniciar-sesion?volver=${encodeURIComponent(ruta + window.location.search)}`);
   }, [router, ruta, token]);
 
   return token ? children : <p className="contenedor estado-carga" role="status">Comprobando sesión…</p>;
