@@ -13,7 +13,7 @@ interface EventoApi extends Omit<EventoResumen, 'categoria' | 'provincia'> {
   provincia: (typeof PROVINCIAS_API)[Provincia];
 }
 
-const EJEMPLO: EventoResumen[] = [
+export const EJEMPLO: EventoResumen[] = [
   { id: 1, nombre: 'Noche de Rock Nacional', categoria: 'Conciertos', provincia: 'San José', lugar: 'Anfiteatro Central', fechaHora: '2026-12-12T19:00:00-06:00', destacado: true, precioDesde: 25000 },
   { id: 2, nombre: 'Festival Pura Vida', categoria: 'Festivales', provincia: 'Heredia', lugar: 'Parque Central', fechaHora: '2026-12-20T15:00:00-06:00', destacado: false, precioDesde: 16500 },
   { id: 3, nombre: 'Gala de Orquesta Sinfónica', categoria: 'Teatro', provincia: 'San José', lugar: 'Teatro Principal', fechaHora: '2027-01-09T19:30:00-06:00', destacado: false, precioDesde: 16500 },
@@ -37,7 +37,7 @@ function estaEnRango(evento: EventoResumen, filtros: Filtros): boolean {
     && (!filtros.fechaHasta || fechaEvento <= new Date(`${filtros.fechaHasta}T23:59:59.999-06:00`));
 }
 
-function nombreDeCodigo<T extends string>(mapa: Record<T, string>, codigo: string): T {
+export function nombreDeCodigo<T extends string>(mapa: Record<T, string>, codigo: string): T {
   const nombre = (Object.keys(mapa) as T[]).find((clave) => mapa[clave] === codigo);
   if (!nombre) throw new Error(`Valor de catálogo desconocido: ${codigo}`);
   return nombre;
