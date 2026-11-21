@@ -21,6 +21,18 @@ a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(-
 .logo span{color:var(--primario)}
 .buscador{flex:1;min-width:240px;display:flex;gap:8px}
 .buscador input{flex:1;min-height:44px;border:2px solid #6B6482;border-radius:999px;padding:0 18px;font-size:15px;color:var(--tinta)}
+.encabezado-cuenta{display:flex;align-items:center}
+.menu-perfil{position:relative}
+.boton-perfil{min-height:44px;padding:0 14px;border:1px solid var(--borde);border-radius:999px;background:#fff;color:var(--tinta);display:inline-flex;align-items:center;gap:8px;font:600 14px var(--fuente-texto),sans-serif;cursor:pointer;list-style:none}
+.boton-perfil::-webkit-details-marker{display:none}
+.boton-perfil::marker{content:""}
+.boton-perfil:hover,.menu-perfil[open] .boton-perfil{border-color:var(--primario)}
+.boton-perfil svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.menu-perfil-opciones{position:absolute;z-index:20;top:calc(100% + 8px);right:0;min-width:190px;padding:8px;background:#fff;border:1px solid var(--borde);border-radius:14px;box-shadow:0 8px 24px #1A15301f;display:flex;flex-direction:column}
+.menu-perfil-opciones a,.menu-perfil-opciones button{min-height:42px;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:var(--tinta);font:500 14px var(--fuente-texto),sans-serif;text-align:left;text-decoration:none;cursor:pointer}
+.menu-perfil-opciones a:hover,.menu-perfil-opciones button:hover{background:var(--fondo)}
+.menu-perfil-opciones button{border-top:1px solid var(--borde);border-radius:0;margin-top:4px;color:#8b2525}
+.menu-perfil-opciones a:focus-visible,.menu-perfil-opciones button:focus-visible,.boton-perfil:focus-visible{outline:3px solid var(--primario);outline-offset:2px}
 .categorias{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:14px}
 .hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;align-items:center;padding-top:48px;padding-bottom:40px}
 .hero h1{font-size:clamp(36px,5vw,56px);line-height:1.05}

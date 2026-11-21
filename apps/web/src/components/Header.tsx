@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import AccionesSesion from '@/components/AccionesSesion';
 import { CATEGORIAS } from '@/lib/catalogo';
 
 export { CATEGORIAS } from '@/lib/catalogo';
@@ -13,8 +14,7 @@ export default function Header() {
           <input id="q" name="q" type="search" placeholder="Busca un evento, artista o lugar" />
           <button type="submit" className="btn btn-primario">Buscar</button>
         </form>
-        <Link href="/mis-boletos" className="chip" style={{ border: 0 }}>Mis boletos</Link>
-        <Link href="/iniciar-sesion" className="btn btn-borde">Iniciar sesión</Link>
+        <AccionesSesion />
       </div>
       <nav aria-label="Categorías" className="contenedor categorias">
         {CATEGORIAS.map((c) => (
