@@ -3,19 +3,24 @@ import { EventoResumen } from '@/lib/eventos';
 import { colones, fecha } from '@/lib/format';
 
 const COLORES = [
-  { fondo: 'var(--verde)', texto: '#fff' },
-  { fondo: 'var(--acento)', texto: 'var(--tinta)' },
-  { fondo: 'var(--tinta)', texto: '#fff' },
-  { fondo: 'var(--violeta)', texto: '#fff' },
+  { fondo: '#023e8a', texto: '#fff' },
+  { fondo: '#caf0f8', texto: '#0f172a' },
+  { fondo: '#334155', texto: '#fff' },
+  { fondo: '#0077b6', texto: '#fff' },
 ];
 
 export default function EventCard({ evento, indice }: { evento: EventoResumen; indice: number }) {
   const color = COLORES[indice % COLORES.length];
   return (
     <article className="tarjeta">
-      <div className="tarjeta-imagen" aria-hidden="true" style={{ background: color.fondo, color: color.texto }}>
-        Imagen del evento
-      </div>
+      {evento.imagen ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="tarjeta-imagen" src={evento.imagen} alt="" />
+      ) : (
+        <div className="tarjeta-imagen" aria-hidden="true" style={{ background: color.fondo, color: color.texto }}>
+          Imagen del evento
+        </div>
+      )}
       <div className="tarjeta-cuerpo">
         <span style={{ font: '600 13px var(--fuente-texto)', color: 'var(--primario)' }}>{evento.categoria}</span>
         <h3 style={{ fontSize: 20 }}>{evento.nombre}</h3>
