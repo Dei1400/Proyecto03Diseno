@@ -1,15 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { api } from '@/lib/api';
+import { destinoSeguro, guardarSesion } from '@/lib/sesion';
+import type { Usuario } from '@/lib/sesion';
 
-export default function IniciarSesion() {
+function FormularioInicioSesion() {
+  const router = useRouter();
+  const volver = useSearchParams().get('volver');
   const [email, setEmail] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [error, setError] = useState('');
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Iniciar sesión:', { email, contrasena });
+    setError('');
+    setCargando(true);
+    try {
+      const { token, usuario } = await api<{ token: string; usuario: Usuario }>('/auth/login', {
+        metodo: 'POST',
+        cuerpo: { correo: email.trim(), contrasena },
+      });
+      guardarSesion(token, usuario);
+      router.replace(destinoSeguro(volver));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión.');
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
@@ -23,12 +44,14 @@ export default function IniciarSesion() {
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {error && <p role="alert" className="alerta-error">{error}</p>}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <label htmlFor="email" style={{ fontWeight: 600, fontSize: 14 }}>Correo electrónico</label>
             <input
               id="email"
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="tu@correo.com"
@@ -48,6 +71,7 @@ export default function IniciarSesion() {
               id="contrasena"
               type="password"
               required
+              autoComplete="current-password"
               value={contrasena}
               onChange={(e) => setContrasena(e.target.value)}
               placeholder="••••••••"
@@ -61,15 +85,15 @@ export default function IniciarSesion() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primario" style={{ width: '100%', marginTop: 12 }}>
-            Iniciar sesión
+          <button type="submit" className="btn btn-primario" disabled={cargando} style={{ width: '100%', marginTop: 12 }}>
+            {cargando ? 'Iniciando sesión…' : 'Iniciar sesión'}
           </button>
         </form>
 
         <div style={{ marginTop: 32, textAlign: 'center', borderTop: '1px solid var(--borde)', paddingTop: 24 }}>
           <p style={{ margin: 0, fontSize: 14 }}>
             ¿No tienes cuenta?{' '}
-            <Link href="/crear-cuenta" style={{ color: 'var(--primario)', fontWeight: 600, textDecoration: 'none' }}>
+            <Link href={volver ? `/crear-cuenta?volver=${encodeURIComponent(volver)}` : '/crear-cuenta'} style={{ color: 'var(--primario)', fontWeight: 600, textDecoration: 'none' }}>
               Registrarse
             </Link>
           </p>
@@ -83,4 +107,8 @@ export default function IniciarSesion() {
       </div>
     </section>
   );
+}
+
+export default function IniciarSesion() {
+  return <Suspense fallback={<p className="contenedor" role="status">Cargando…</p>}><FormularioInicioSesion /></Suspense>;
 }

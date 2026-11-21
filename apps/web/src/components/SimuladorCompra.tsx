@@ -80,7 +80,6 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
                 <fieldset className="demo-metodos">
                   <legend className="solo-lector">Método de pago</legend>
                   <label><input type="radio" name="metodo" value="tarjeta" checked={metodo === 'tarjeta'} onChange={(e) => setMetodo(e.target.value)} /> Tarjeta</label>
-                  <label><input type="radio" name="metodo" value="sinpe" checked={metodo === 'sinpe'} onChange={(e) => setMetodo(e.target.value)} /> SINPE Móvil</label>
                   <label><input type="radio" name="metodo" value="cuotas" checked={metodo === 'cuotas'} onChange={(e) => setMetodo(e.target.value)} /> Cuotas</label>
                 </fieldset>
                 <button type="button" className="btn btn-borde" onClick={() => setPaso('asientos')}>Volver a los asientos</button>
