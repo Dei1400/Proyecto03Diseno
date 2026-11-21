@@ -3,7 +3,6 @@
 .demo-ruta a{color:var(--tinta-suave)}
 .demo-pagina h1{font-size:clamp(30px,5vw,42px)}
 .demo-intro{margin:8px 0 24px;color:var(--tinta-suave)}
-.demo-aviso{background:#fff;border:1px solid var(--borde);border-radius:12px;padding:12px 16px}
 .demo-rejilla{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px);gap:24px;align-items:start}
 .demo-caja{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:24px;min-width:0}
 .demo-caja h2{font-size:22px}
@@ -15,7 +14,7 @@
 .demo-asiento{width:44px;height:44px;border:2px solid var(--primario);border-radius:8px;background:#fff;color:var(--primario);font:600 14px var(--fuente-texto),sans-serif;cursor:pointer}
 .demo-asiento-elegido{background:var(--primario);color:#fff}
 .demo-asiento:disabled{background:var(--borde);border-color:var(--borde);color:var(--tinta-suave);cursor:not-allowed}
-.demo-leyenda,.demo-nota{font-size:13px}
+.demo-leyenda{font-size:13px}
 .demo-error{color:#a32626!important;font-weight:600}
 .demo-metodos{border:0;padding:0;margin:20px 0;display:flex;flex-direction:column;gap:10px}
 .demo-metodos label{display:flex;align-items:center;gap:10px;border:1px solid var(--borde);border-radius:12px;padding:12px;cursor:pointer}

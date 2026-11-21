@@ -48,7 +48,6 @@ export default function PanelCompra({ eventoId, zonas }: { eventoId: number; zon
       ) : (
         <button type="button" className="btn btn-primario btn-grande" disabled>Comprar entradas</button>
       )}
-      <p className="panel-pie">Vista de prueba: no se realizan reservas ni pagos reales.</p>
     </aside>
   );
 }

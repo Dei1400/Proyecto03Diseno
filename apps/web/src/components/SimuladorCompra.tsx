@@ -33,9 +33,6 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
       <nav aria-label="Ruta" className="demo-ruta">
         <Link href="/">Inicio</Link> › <Link href={`/eventos/${evento.id}`}>{evento.nombre}</Link> › <strong>Entradas</strong>
       </nav>
-      <p className="demo-aviso" role="status">
-        Vista de prueba: los asientos son de ejemplo. No se reserva ni se cobra nada y no se emiten boletos.
-      </p>
       <h1>{paso === 'asientos' ? 'Elige tus asientos' : paso === 'pago' ? 'Revisa tu compra' : 'Simulación finalizada'}</h1>
       <p className="demo-intro">{evento.nombre} · {fechaEvento} · {zona.nombre}</p>
 
@@ -50,10 +47,10 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
           <section className="demo-caja" aria-labelledby="demo-paso">
             {paso === 'asientos' ? (
               <>
-                <h2 id="demo-paso">Mapa de asientos de ejemplo</h2>
+                <h2 id="demo-paso">Mapa de asientos ilustrativo</h2>
                 <p>Selecciona hasta 6 asientos en la zona {zona.nombre}.</p>
                 <div className="demo-escenario">Escenario</div>
-                <div className="demo-mapa" aria-label="Asientos de ejemplo">
+                <div className="demo-mapa" aria-label="Asientos ilustrativos">
                   {FILAS.map((fila) => (
                     <div className="demo-fila" key={fila}>
                       <span className="demo-fila-nombre" aria-hidden="true">{fila}</span>
@@ -63,7 +60,7 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
                         const elegido = asientos.includes(asiento);
                         return (
                           <button key={asiento} type="button" disabled={ocupado} aria-pressed={elegido}
-                            aria-label={`Fila ${fila}, asiento ${numero}${ocupado ? ', ocupado en el ejemplo' : ''}`}
+                            aria-label={`Fila ${fila}, asiento ${numero}${ocupado ? ', ocupado' : ''}`}
                             className={`demo-asiento${elegido ? ' demo-asiento-elegido' : ''}`}
                             onClick={() => seleccionar(asiento)}>
                             {numero}
@@ -73,12 +70,12 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
                     </div>
                   ))}
                 </div>
-                <p className="demo-leyenda">Blanco: disponible · Morado: seleccionado · Gris: ocupado en el ejemplo</p>
+                <p className="demo-leyenda">Blanco: disponible · Morado: seleccionado · Gris: ocupado</p>
                 {mensaje && <p className="demo-error" role="alert">{mensaje}</p>}
               </>
             ) : (
               <>
-                <h2 id="demo-paso">Método de pago de ejemplo</h2>
+                <h2 id="demo-paso">Método de pago</h2>
                 <p>Elige una opción para visualizar el siguiente paso. No solicitamos datos de pago.</p>
                 <fieldset className="demo-metodos">
                   <legend className="solo-lector">Método de pago</legend>
@@ -92,7 +89,7 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
           </section>
 
           <aside className="demo-caja demo-resumen" aria-labelledby="demo-resumen">
-            <h2 id="demo-resumen">Resumen de ejemplo</h2>
+            <h2 id="demo-resumen">Resumen</h2>
             <p><strong>Zona:</strong> {zona.nombre}</p>
             <p><strong>Asientos:</strong> {asientos.length ? asientos.join(', ') : 'Ninguno seleccionado'}</p>
             <p><strong>Precio por entrada:</strong> {colones(zona.precioFinal)}</p>
@@ -102,7 +99,6 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
             ) : (
               <button type="button" className="btn btn-primario" onClick={() => setPaso('final')}>Simular pago</button>
             )}
-            <p className="demo-nota">Los importes son solo para esta demostración.</p>
           </aside>
         </div>
       )}
