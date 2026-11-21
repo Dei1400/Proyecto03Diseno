@@ -9,6 +9,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { OrdenesModule } from './ordenes/ordenes.module';
 import { SaludController } from './salud/salud.controller';
 import { BoletosModule } from './boletos/boletos.module';
+import { UsuariosModule } from './usuarios/usuarios.module';
+import { UsuariosService } from './usuarios/usuarios.service';
+import { UsuariosController } from './usuarios/usuarios.controller';
 
 @Module({
   imports: [
@@ -19,6 +22,7 @@ import { BoletosModule } from './boletos/boletos.module';
     AsientosModule,
     BoletosModule,
     OrdenesModule,
+    UsuariosModule,
   ],
   controllers: [AppController, SaludController],
   providers: [AppService],
