@@ -2,15 +2,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { FiltroErrores } from './comun/filtro-errores.filter';
-
+import { origenesPermitidos } from './comun/origenes-permitidos';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: process.env.FRONTEND_URL
-      ? process.env.FRONTEND_URL.split(',')
-      : true,
-  });
+  // Solo la web (FRONTEND_URL) puede llamar al API
+  app.enableCors({ origin: origenesPermitidos() });
 
   // Valida los datos que llegan (DTO) y quita los campos que no se esperan
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
