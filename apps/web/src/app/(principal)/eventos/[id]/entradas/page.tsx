@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import SimuladorCompra from '@/components/SimuladorCompra';
+import CompraEntradas from '@/components/CompraEntradas';
+import RutaPrivada from '@/components/RutaPrivada';
 import { obtenerEvento } from '@/lib/evento-detalle';
 import { fechaLarga, hora } from '@/lib/format';
 import './entradas.css';
@@ -33,7 +34,7 @@ async function ContenidoEntradas({ params, searchParams }: Props) {
     );
   }
 
-  return <SimuladorCompra evento={evento} zona={zona} fechaEvento={`${fechaLarga(evento.fechaHora)} · ${hora(evento.fechaHora)}`} />;
+  return <RutaPrivada><CompraEntradas evento={evento} zona={zona} fechaEvento={`${fechaLarga(evento.fechaHora)} · ${hora(evento.fechaHora)}`} /></RutaPrivada>;
 }
 
 export default function Entradas(props: Props) {
