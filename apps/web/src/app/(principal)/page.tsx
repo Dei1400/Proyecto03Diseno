@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 import EventCard from '@/components/EventCard';
+import HeroDestacado from '@/components/HeroDestacado';
 import { CATEGORIAS } from '@/lib/catalogo';
 import { obtenerEventos } from '@/lib/eventos';
-import { colones, fecha, hora } from '@/lib/format';
 
 type Params = { categoria?: string | string[] };
 
@@ -17,7 +17,7 @@ async function ContenidoInicio({ searchParams }: { searchParams: Promise<Params>
   return (
     <>
       <section className="contenedor hero">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="hero-intro">
           <p style={{ margin: 0, fontWeight: 600, fontSize: 14, color: 'var(--primario)' }}>Entradas en Costa Rica</p>
           <h1>Tu próximo plan empieza aquí</h1>
           <p style={{ margin: 0 }}>
@@ -29,21 +29,7 @@ async function ContenidoInicio({ searchParams }: { searchParams: Promise<Params>
           </div>
         </div>
 
-        {destacado && (
-          <article className="destacado">
-            <span className="etiqueta">Evento destacado</span>
-            <h2>{destacado.nombre}</h2>
-            <p style={{ margin: 0, color: 'var(--sobre-hero)', maxWidth: 'none' }}>
-              {fecha(destacado.fechaHora)} · {hora(destacado.fechaHora)} · {destacado.lugar}, {destacado.provincia}
-            </p>
-            <p style={{ margin: 0, color: 'var(--sobre-hero)', fontWeight: 600, fontSize: 18, maxWidth: 'none' }}>
-              {destacado.precioDesde === null ? 'Precio no disponible' : `Desde ${colones(destacado.precioDesde)} · precio final con impuestos`}
-            </p>
-            <Link href={`/eventos/${destacado.id}`} className="btn" style={{ alignSelf: 'flex-start', background: 'var(--hero-boton)', color: 'var(--hero-boton-texto)', borderColor: 'var(--hero-boton)' }}>
-              Comprar entradas
-            </Link>
-          </article>
-        )}
+        {destacado && <HeroDestacado evento={destacado} />}
       </section>
 
       <section className="contenedor seccion" aria-labelledby="prox">

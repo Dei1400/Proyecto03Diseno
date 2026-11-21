@@ -13,9 +13,14 @@ export default function EventCard({ evento, indice }: { evento: EventoResumen; i
   const color = COLORES[indice % COLORES.length];
   return (
     <article className="tarjeta">
-      <div className="tarjeta-imagen" aria-hidden="true" style={{ background: color.fondo, color: color.texto }}>
-        Imagen del evento
-      </div>
+      {evento.imagen ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="tarjeta-imagen" src={evento.imagen} alt="" />
+      ) : (
+        <div className="tarjeta-imagen" aria-hidden="true" style={{ background: color.fondo, color: color.texto }}>
+          Imagen del evento
+        </div>
+      )}
       <div className="tarjeta-cuerpo">
         <span style={{ font: '600 13px var(--fuente-texto)', color: 'var(--primario)' }}>{evento.categoria}</span>
         <h3 style={{ fontSize: 20 }}>{evento.nombre}</h3>
