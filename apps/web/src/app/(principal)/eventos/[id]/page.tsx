@@ -47,10 +47,12 @@ async function ContenidoDetalle({ params }: Props) {
             <div><dt>Lugar</dt><dd>{evento.lugar}, {evento.provincia}</dd></div>
             <div><dt>Clasificación de edad</dt><dd>{evento.clasificacionEdad}</dd></div>
           </dl>
-          <section aria-labelledby="acerca">
-            <h2 id="acerca">Acerca del evento</h2>
-            <p className="texto-largo">{evento.descripcion}</p>
-          </section>
+          {!evento.esEjemplo && (
+            <section aria-labelledby="acerca">
+              <h2 id="acerca">Acerca del evento</h2>
+              <p className="texto-largo">{evento.descripcion}</p>
+            </section>
+          )}
           <section aria-labelledby="ubicacion">
             <h2 id="ubicacion">Ubicación</h2>
             <p>
