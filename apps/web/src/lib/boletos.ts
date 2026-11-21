@@ -1,12 +1,7 @@
-import { api } from './api';
-import { PROVINCIAS_API } from './catalogo';
-import { nombreDeCodigo } from './eventos';
-
 export interface BoletoVista {
   id: number;
-  codigo: string;
   descripcion: string;
-  qr: string;
+  qr?: string;
 }
 
 export interface BoletoApi extends BoletoVista {
@@ -20,17 +15,7 @@ export interface BoletoApi extends BoletoVista {
 }
 
 export async function obtenerBoletos(): Promise<BoletoApi[]> {
-  const boletos = await api<BoletoApi[]>('/boletos', { metodo: 'GET', autenticado: true });
-  return boletos.map(convertirProvincia);
-}
-
-export async function obtenerBoleto(id: number): Promise<BoletoApi> {
-  const boleto = await api<BoletoApi>(`/boletos/${id}`, { metodo: 'GET', autenticado: true });
-  return convertirProvincia(boleto);
-}
-
-function convertirProvincia(boleto: BoletoApi): BoletoApi {
-  return { ...boleto, evento: { ...boleto.evento, provincia: nombreDeCodigo(PROVINCIAS_API, boleto.evento.provincia) } };
+  throw new Error('La consulta de boletos aún no está disponible.');
 }
 
 export function agruparPorEvento(boletos: BoletoApi[]) {

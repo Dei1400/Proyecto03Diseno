@@ -9,7 +9,20 @@ import { fechaLarga } from '@/lib/format';
 
 type Pestana = 'proximos' | 'pasados';
 
-export default function ListaBoletos() {
+const BOLETOS_DE_EJEMPLO: BoletoApi[] = [
+  {
+    id: 1,
+    descripcion: 'Platea · Fila A · Asiento 12',
+    evento: { id: 1, nombre: 'Concierto de ejemplo', fechaHora: '2030-12-12T19:00:00-06:00', lugar: 'Teatro Principal', provincia: 'San José' },
+  },
+  {
+    id: 2,
+    descripcion: 'General · Fila B · Asiento 8',
+    evento: { id: 2, nombre: 'Festival de ejemplo', fechaHora: '2020-01-15T19:00:00-06:00', lugar: 'Parque Central', provincia: 'Heredia' },
+  },
+];
+
+export default function ListaBoletos({ vistaPrevia = false }: { vistaPrevia?: boolean }) {
   const [boletos, setBoletos] = useState<BoletoApi[] | null>(null);
   const [error, setError] = useState('');
   const [pestana, setPestana] = useState<Pestana>('proximos');
@@ -17,12 +30,12 @@ export default function ListaBoletos() {
 
   useEffect(() => {
     let activo = true;
-    obtenerBoletos().then(
+    (vistaPrevia ? Promise.resolve(BOLETOS_DE_EJEMPLO) : obtenerBoletos()).then(
       (datos) => { if (activo) setBoletos(datos); },
       (err: unknown) => { if (activo) setError(err instanceof Error ? err.message : 'No pudimos cargar tus boletos.'); },
     );
     return () => { activo = false; };
-  }, [intento]);
+  }, [intento, vistaPrevia]);
 
   const grupos = useMemo(() => boletos ? agruparPorEvento(boletos) : [], [boletos]);
   const proximos = grupos.filter((g) => !g.pasado);
@@ -82,7 +95,7 @@ export default function ListaBoletos() {
             <span className="grupo-cantidad">{lista.length} {lista.length === 1 ? 'boleto' : 'boletos'}</span>
           </div>
           <ul className="grupo-lista">
-            {lista.map((b) => <TarjetaBoleto key={b.id} boleto={b} nombreEvento={evento.nombre} pasado={pasado} />)}
+            {lista.map((b) => <TarjetaBoleto key={b.id} boleto={b} nombreEvento={evento.nombre} pasado={pasado} vistaPrevia={vistaPrevia} />)}
           </ul>
         </section>
       ))}

@@ -47,7 +47,7 @@ export default function PerfilCuenta() {
             <div><dt>Teléfono</dt><dd>{usuario.telefono}</dd></div>
           </dl>
           <button type="button" className="btn btn-primario" disabled>Editar perfil</button>
-          <p>La edición del perfil no está disponible en el API actualmente.</p>
+          <p>La edición del perfil estará disponible cuando se conecte con el servidor.</p>
         </section>
       )}
     </div>
