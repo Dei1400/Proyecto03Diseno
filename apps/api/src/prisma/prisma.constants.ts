@@ -1,0 +1,2 @@
+
+export const TIEMPO_MAXIMO_TRANSACCION_MS = 15 * 1000;
