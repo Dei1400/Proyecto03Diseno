@@ -4,7 +4,8 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { EstadoAsiento, EstadoOrden, Prisma } from '@prisma/client';
+import { Asiento, EstadoAsiento, EstadoOrden, Prisma } from '@prisma/client';
+import { TIEMPO_MAXIMO_TRANSACCION_MS } from '../prisma/prisma.constants';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   MAXIMO_BOLETOS_POR_EVENTO,
@@ -14,10 +15,8 @@ import { ContextoAsiento } from './contexto-asiento';
 import { SeleccionAsientosDto } from './dto/seleccion-asientos.dto';
 
 const UN_MINUTO_EN_MS = 60 * 1000;
-// Supabase está lejos: se le da más tiempo a la transacción que el de Prisma (5 s)
-const TIEMPO_MAXIMO_TRANSACCION_MS = 15 * 1000;
 
-// Una acción sobre un asiento (retener, liberar…)
+// Una acción sobre un asiento (retener, liberar, vender…)
 type AccionAsiento = (asiento: ContextoAsiento) => void;
 
 export interface ResultadoAsiento {
@@ -30,7 +29,7 @@ export interface ResultadoAsiento {
 export class AsientosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // apartar asientos por 10 minutos
+  // Apartar asientos por 10 minutos
   retener(usuarioId: number, datos: SeleccionAsientosDto) {
     const hasta = new Date(Date.now() + MINUTOS_RETENCION * UN_MINUTO_EN_MS);
 
@@ -58,7 +57,16 @@ export class AsientosService {
     );
   }
 
-  // Aplica la acción a cada asiento (su estado decide si se puede) y la guarda
+  // vende los asientos de la orden (patrón State)
+  async venderDeOrden(
+    tx: Prisma.TransactionClient,
+    ordenId: number,
+    usuarioId: number,
+  ): Promise<ResultadoAsiento[]> {
+    const registros = await tx.asiento.findMany({ where: { ordenId } });
+    return this.guardarCada(tx, registros, (asiento) => asiento.vender(usuarioId));
+  }
+
   private async aplicar(
     tx: Prisma.TransactionClient,
     datos: SeleccionAsientosDto,
@@ -70,13 +78,20 @@ export class AsientosService {
     if (registros.length !== datos.asientoIds.length) {
       throw new NotFoundException('Alguno de los asientos no existe en este evento');
     }
+    return this.guardarCada(tx, registros, accion);
+  }
 
+  // Aplica la acción a cada asiento y la guarda
+  private async guardarCada(
+    tx: Prisma.TransactionClient,
+    registros: Asiento[],
+    accion: AccionAsiento,
+  ): Promise<ResultadoAsiento[]> {
     const resultado: ResultadoAsiento[] = [];
     for (const registro of registros) {
       const asiento = new ContextoAsiento(registro);
       accion(asiento); // patrón State: si no se puede, la clase del estado lanza el error
 
-      // Se guarda solo si nadie cambió el asiento desde que se leyó entoncesasí dos personas nunca se quedan con el mismo asiento
       const { count } = await tx.asiento.updateMany({
         where: {
           id: registro.id,
@@ -101,7 +116,7 @@ export class AsientosService {
     return resultado;
   }
 
-  // máximo 6 boletos por persona en cada evento
+  // Máximo 6 boletos por persona en cada evento
   private async verificarMaximo(
     tx: Prisma.TransactionClient,
     usuarioId: number,
