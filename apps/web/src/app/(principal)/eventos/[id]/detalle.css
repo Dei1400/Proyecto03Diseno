@@ -1,0 +1,45 @@
+.detalle-pagina{padding-top:28px}
+.detalle-ruta{font-size:14px;color:var(--tinta-suave);margin-bottom:14px}
+.detalle-ruta a{color:var(--tinta-suave)}
+.detalle-ruta strong{color:var(--tinta)}
+.detalle-rejilla{display:grid;grid-template-columns:1fr minmax(300px,400px);gap:32px;align-items:start}
+.detalle-principal{min-width:0}
+.detalle-imagen{width:100%;height:340px;border-radius:28px;object-fit:cover;display:block}
+.detalle-imagen-vacia{background:var(--primario);color:#fff;display:flex;align-items:flex-end;padding:24px;font:600 14px var(--fuente-texto),sans-serif}
+.detalle-categoria{margin:24px 0 8px;font:600 14px var(--fuente-texto),sans-serif;color:var(--primario)}
+.detalle-principal h1{font-size:clamp(32px,5vw,46px);line-height:1.05;margin-bottom:20px}
+.datos{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.datos > div{background:#fff;border:1px solid var(--borde);border-radius:16px;padding:16px}
+.datos dt{font:600 13px var(--fuente-texto),sans-serif;color:var(--tinta-suave)}
+.datos dd{margin:2px 0 0;font:600 16px var(--fuente-texto),sans-serif}
+.detalle-principal section{margin-top:36px}
+.detalle-principal h2{font-size:26px;margin-bottom:12px}
+.texto-largo{margin:0;line-height:1.7;color:#4A4560;max-width:640px}
+.politicas{margin:0;padding-left:20px;line-height:1.8;color:#4A4560}
+.detalle-enlace{color:var(--primario);font-weight:600;text-underline-offset:3px}
+.panel-compra{background:#fff;border:1px solid var(--borde);border-radius:24px;padding:24px;position:sticky;top:16px;display:flex;flex-direction:column;gap:14px}
+.panel-compra h2{font-size:26px}
+.panel-nota{margin:-8px 0 0;font-size:14px;color:var(--tinta-suave)}
+.zonas{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.zona{display:flex;gap:12px;align-items:center;border:2px solid var(--borde);border-radius:16px;padding:14px;background:#fff;cursor:pointer}
+.zona input{width:22px;height:22px;accent-color:var(--primario);flex:none}
+.zona-sel{border-color:var(--primario);background:#F1EFFD}
+.zona:focus-within{outline:3px solid var(--primario);outline-offset:2px}
+.zona-texto{flex:1;display:flex;flex-direction:column}
+.zona-texto strong{font:700 17px var(--fuente-titulo),sans-serif}
+.zona-texto span,.zona-precio span{font-size:14px;color:var(--tinta-suave)}
+.zona-precio{display:flex;flex-direction:column;text-align:right}
+.zona-precio strong{font:700 18px var(--fuente-texto),sans-serif}
+.zona-precio span{font-size:12px}
+.desglose summary{min-height:44px;display:flex;align-items:center;font:600 15px var(--fuente-texto),sans-serif;color:var(--primario);cursor:pointer}
+.desglose summary:focus-visible{outline:3px solid var(--primario);outline-offset:2px;border-radius:8px}
+.desglose dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px;font-size:14px;color:#4A4560}
+.desglose dd{margin:0}
+.desglose .total{color:var(--tinta);font-weight:700}
+.btn-grande{min-height:48px;font-size:16px;width:100%}
+.panel-compra .btn:disabled{opacity:.6;cursor:not-allowed}
+@media (max-width:900px){
+  .detalle-rejilla{grid-template-columns:1fr}
+  .panel-compra{position:static;order:-1}
+  .detalle-imagen{height:220px}
+}
