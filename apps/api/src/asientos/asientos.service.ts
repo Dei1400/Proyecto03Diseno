@@ -14,7 +14,7 @@ import { ContextoAsiento } from './contexto-asiento';
 import { SeleccionAsientosDto } from './dto/seleccion-asientos.dto';
 
 const UN_MINUTO_EN_MS = 60 * 1000;
-// Supabase está lejos: se le da más tiempo a la transacción que el de Prisma (5 s)
+// Supabase está lejos. se le da más tiempo a la transacción que el de Prisma (5 s)
 const TIEMPO_MAXIMO_TRANSACCION_MS = 15 * 1000;
 
 // Una acción sobre un asiento (retener, liberar…)
