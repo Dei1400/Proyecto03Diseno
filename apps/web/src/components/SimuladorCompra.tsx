@@ -70,7 +70,7 @@ export default function SimuladorCompra({ evento, zona, fechaEvento }: { evento:
                     </div>
                   ))}
                 </div>
-                <p className="demo-leyenda">Blanco: disponible · Morado: seleccionado · Gris: ocupado</p>
+                <p className="demo-leyenda">Selecciona un asiento disponible. Los asientos ocupados no se pueden seleccionar.</p>
                 {mensaje && <p className="demo-error" role="alert">{mensaje}</p>}
               </>
             ) : (

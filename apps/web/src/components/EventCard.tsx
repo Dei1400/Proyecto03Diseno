@@ -3,10 +3,10 @@ import { EventoResumen } from '@/lib/eventos';
 import { colones, fecha } from '@/lib/format';
 
 const COLORES = [
-  { fondo: 'var(--verde)', texto: '#fff' },
-  { fondo: 'var(--acento)', texto: 'var(--tinta)' },
-  { fondo: 'var(--tinta)', texto: '#fff' },
-  { fondo: 'var(--violeta)', texto: '#fff' },
+  { fondo: '#023e8a', texto: '#fff' },
+  { fondo: '#caf0f8', texto: '#0f172a' },
+  { fondo: '#334155', texto: '#fff' },
+  { fondo: '#0077b6', texto: '#fff' },
 ];
 
 export default function EventCard({ evento, indice }: { evento: EventoResumen; indice: number }) {

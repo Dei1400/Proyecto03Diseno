@@ -14,9 +14,9 @@
 .filtros-formulario{padding:0 14px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .filtro{display:flex;flex-direction:column;gap:4px;min-width:0}
 .filtro label{font:600 14px/1.2 var(--fuente-texto),sans-serif;min-height:2.4em}
-.filtro select,.filtro input,.orden select{min-height:44px;border:2px solid #6B6482;border-radius:10px;padding:0 10px;font-size:16px;color:var(--tinta);background:#fff;width:100%;min-width:0}
+.filtro select,.filtro input,.orden select{min-height:44px;border:2px solid var(--borde-campo);border-radius:10px;padding:0 10px;font-size:16px;color:var(--tinta);background:var(--superficie);width:100%;min-width:0}
 .filtros-botones{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:8px}
-.filtros-error{color:#a32626}
+.filtros-error{color:var(--error)}
 .resultados-barra{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
 .resultados-barra h2{font:600 18px var(--fuente-texto),sans-serif}
 .orden{display:flex;align-items:center;gap:10px}
@@ -25,6 +25,6 @@
 .resultados-lista{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
 .resultados-lista li{display:flex}
 .resultados-lista li > article{width:100%}
-.sin-resultados{background:#fff;border:1px solid var(--borde);border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.sin-resultados{background:var(--superficie);border:1px solid var(--borde);border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 .sin-resultados h3{font-size:24px}
 .sin-resultados p{margin:0;color:var(--tinta-suave)}

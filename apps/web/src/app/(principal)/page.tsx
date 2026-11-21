@@ -33,13 +33,13 @@ async function ContenidoInicio({ searchParams }: { searchParams: Promise<Params>
           <article className="destacado">
             <span className="etiqueta">Evento destacado</span>
             <h2>{destacado.nombre}</h2>
-            <p style={{ margin: 0, color: '#fff', maxWidth: 'none' }}>
+            <p style={{ margin: 0, color: 'var(--sobre-hero)', maxWidth: 'none' }}>
               {fecha(destacado.fechaHora)} · {hora(destacado.fechaHora)} · {destacado.lugar}, {destacado.provincia}
             </p>
-            <p style={{ margin: 0, color: '#fff', fontWeight: 600, fontSize: 18, maxWidth: 'none' }}>
+            <p style={{ margin: 0, color: 'var(--sobre-hero)', fontWeight: 600, fontSize: 18, maxWidth: 'none' }}>
               {destacado.precioDesde === null ? 'Precio no disponible' : `Desde ${colones(destacado.precioDesde)} · precio final con impuestos`}
             </p>
-            <Link href={`/eventos/${destacado.id}`} className="btn" style={{ alignSelf: 'flex-start', background: '#fff', color: 'var(--tinta)', borderColor: '#fff' }}>
+            <Link href={`/eventos/${destacado.id}`} className="btn" style={{ alignSelf: 'flex-start', background: 'var(--hero-boton)', color: 'var(--hero-boton-texto)', borderColor: 'var(--hero-boton)' }}>
               Comprar entradas
             </Link>
           </article>

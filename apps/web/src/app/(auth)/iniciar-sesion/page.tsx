@@ -38,7 +38,7 @@ function FormularioInicioSesion() {
       <div style={{ width: '100%', maxWidth: 400 }}>
         <div style={{ marginBottom: 40 }}>
           <h1 style={{ fontSize: 32, marginBottom: 12, textAlign: 'center' }}>Iniciar sesión</h1>
-          <p style={{ fontSize: 14, color: '#666', textAlign: 'center', margin: 0 }}>
+          <p style={{ fontSize: 14, color: 'var(--tinta-suave)', textAlign: 'center', margin: 0 }}>
             Accede a tu cuenta para comprar entradas
           </p>
         </div>
@@ -58,7 +58,9 @@ function FormularioInicioSesion() {
               style={{
                 padding: '12px 16px',
                 borderRadius: 8,
-                border: '1px solid var(--borde)',
+                border: '1px solid var(--borde-campo)',
+                background: 'var(--superficie)',
+                color: 'var(--tinta)',
                 fontSize: 14,
                 fontFamily: 'var(--fuente-texto)',
               }}
@@ -78,7 +80,9 @@ function FormularioInicioSesion() {
               style={{
                 padding: '12px 16px',
                 borderRadius: 8,
-                border: '1px solid var(--borde)',
+                border: '1px solid var(--borde-campo)',
+                background: 'var(--superficie)',
+                color: 'var(--tinta)',
                 fontSize: 14,
                 fontFamily: 'var(--fuente-texto)',
               }}

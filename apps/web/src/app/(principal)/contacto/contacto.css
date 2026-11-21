@@ -4,19 +4,19 @@
 .cto-intro{margin:0 0 32px;font-size:18px;color:var(--tinta-suave);max-width:620px}
 .cto-rejilla{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:32px;align-items:start}
 .cto-medios{display:flex;flex-direction:column;gap:14px}
-.cto-tarjeta{background:#fff;border:1px solid var(--borde);border-radius:18px;padding:20px}
+.cto-tarjeta{background:var(--superficie);border:1px solid var(--borde);border-radius:18px;padding:20px}
 .cto-tarjeta h3{font:600 14px var(--fuente-texto),sans-serif;color:var(--tinta-suave);margin-bottom:4px}
 .cto-enlace{color:var(--primario);font-weight:600;text-underline-offset:3px;font-size:17px}
-.cto-formulario{background:#fff;border:1px solid var(--borde);border-radius:24px;padding:28px}
+.cto-formulario{background:var(--superficie);border:1px solid var(--borde);border-radius:24px;padding:28px}
 .cto-form{display:flex;flex-direction:column;gap:18px}
 .cto-form h2{font-size:24px}
 .cto-campo{display:flex;flex-direction:column;gap:6px}
 .cto-campo label{font:600 15px var(--fuente-texto),sans-serif}
-.cto-campo input,.cto-campo select,.cto-campo textarea{border:2px solid #6B6482;border-radius:12px;padding:0 14px;font:400 16px var(--fuente-texto),sans-serif;color:var(--tinta);background:#fff;width:100%}
+.cto-campo input,.cto-campo select,.cto-campo textarea{border:2px solid var(--borde-campo);border-radius:12px;padding:0 14px;font:400 16px var(--fuente-texto),sans-serif;color:var(--tinta);background:var(--superficie);width:100%}
 .cto-campo input,.cto-campo select{min-height:48px}
 .cto-campo textarea{padding:12px 14px;resize:vertical;min-height:140px}
-.cto-campo [aria-invalid="true"]{border-color:#B3261E;background:#FDF6F5}
+.cto-campo [aria-invalid="true"]{border-color:var(--error);background:var(--error-fondo)}
 .cto-pista{margin:0;font-size:13px;color:var(--tinta-suave)}
-.cto-error{margin:0;color:#B3261E;font-size:14px;font-weight:600}
+.cto-error{margin:0;color:var(--error);font-size:14px;font-weight:600}
 .cto-form .btn{align-self:flex-start}
 @media (max-width:860px){.cto-rejilla{grid-template-columns:1fr}.cto-formulario{padding:20px}}
