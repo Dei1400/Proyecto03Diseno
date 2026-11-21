@@ -2,17 +2,12 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useSyncExternalStore } from 'react';
-import { obtenerToken } from '@/lib/sesion';
-
-function suscribir(callback: () => void) {
-  window.addEventListener('storage', callback);
-  return () => window.removeEventListener('storage', callback);
-}
+import { obtenerToken, suscribirSesion } from '@/lib/sesion';
 
 export default function RutaPrivada({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const ruta = usePathname();
-  const token = useSyncExternalStore<string | null | undefined>(suscribir, obtenerToken, () => undefined);
+  const token = useSyncExternalStore<string | null | undefined>(suscribirSesion, obtenerToken, () => undefined);
 
   useEffect(() => {
     if (token === null) router.replace(`/iniciar-sesion?volver=${encodeURIComponent(ruta)}`);

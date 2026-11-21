@@ -6,7 +6,7 @@ export const PASOS: Paso[] = [
   { titulo: 'Elige tu evento', texto: 'Busca por nombre, artista o lugar, o explora por categoría. En el detalle del evento ves la fecha, el lugar y el precio final de cada zona.' },
   { titulo: 'Inicia sesión o crea tu cuenta', texto: 'Al tocar Comprar te pedimos iniciar sesión. Si aún no tienes cuenta, crearla toma un minuto y volverás al mismo evento.' },
   { titulo: 'Elige tus asientos', texto: 'Selecciona hasta 6 boletos en el mapa. Quedan apartados para ti durante 10 minutos, con un temporizador siempre visible.' },
-  { titulo: 'Paga', texto: 'Revisa el desglose con impuestos y cargos y paga con tarjeta, SINPE Móvil o en cuotas.' },
+  { titulo: 'Paga', texto: 'Revisa el desglose con impuestos y cargos y paga con tarjeta o en cuotas.' },
   { titulo: 'Recibe tus boletos', texto: 'Cada asiento comprado genera un boleto con su código QR único. Lo encuentras en Mis boletos.' },
 ];
 
@@ -16,8 +16,7 @@ export const SECCIONES: SeccionFaq[] = [
     titulo: 'Pagos',
     preguntas: [
       { pregunta: '¿El precio que veo es el precio final?', respuesta: 'Sí. El precio incluye IVA (13 %), impuesto de espectáculos públicos (6 %), impuesto municipal (5 %) y el cargo por servicio. No hay sorpresas al pagar.' },
-      { pregunta: '¿Cuánto tiempo tengo para pagar?', respuesta: 'Tus asientos se apartan por 10 minutos. Si pagas con SINPE Móvil, el tiempo se extiende una sola vez, 5 minutos más. Al vencer, los asientos se liberan.' },
-      { pregunta: '¿Cómo pago con SINPE Móvil?', respuesta: 'Elige SINPE Móvil, haz la transferencia al número que te mostramos con la referencia indicada y toca "Ya hice el SINPE" para confirmar.' },
+      { pregunta: '¿Cuánto tiempo tengo para pagar?', respuesta: 'Tus asientos se apartan por 10 minutos. Al vencer, los asientos se liberan.' },
     ],
   },
   {
