@@ -2,14 +2,35 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { api } from '@/lib/api';
+import { guardarSesion, type Usuario } from '@/lib/sesion';
 
 export default function IniciarSesion() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [contrasena, setContrasena] = useState('');
+  const [error, setError] = useState('');
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Envía el correo y la contraseña al API y guarda la sesión (token)
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Iniciar sesión:', { email, contrasena });
+    setError('');
+    setCargando(true);
+        try {
+      const { token, usuario } = await api<{ token: string; usuario: Usuario }>(
+        '/auth/login',
+        { metodo: 'POST', cuerpo: { correo: email.trim(), contrasena } },
+      );
+      guardarSesion(token, usuario);
+      setContrasena(''); // no deja la contraseña escrita en la pantalla
+      router.push('/');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No pudimos iniciar sesión.');
+    } finally {
+      setCargando(false); // el botón vuelve a la normalidad, salga bien o mal
+    }
   };
 
   return (
@@ -21,6 +42,12 @@ export default function IniciarSesion() {
             Accede a tu cuenta para comprar entradas
           </p>
         </div>
+
+        {error && (
+          <p role="alert" className="alerta-error" style={{ marginBottom: 16 }}>
+            <span aria-hidden="true">⚠</span> {error}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -61,8 +88,8 @@ export default function IniciarSesion() {
             />
           </div>
 
-          <button type="submit" className="btn btn-primario" style={{ width: '100%', marginTop: 12 }}>
-            Iniciar sesión
+          <button type="submit" className="btn btn-primario" disabled={cargando} style={{ width: '100%', marginTop: 12 }}>
+            {cargando ? 'Entrando…' : 'Iniciar sesión'}
           </button>
         </form>
 

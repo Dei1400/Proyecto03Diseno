@@ -1,3 +1,4 @@
+import { obtenerToken } from './sesion';
 export class ErrorApi extends Error {
   constructor(public readonly estado: number, mensaje: string) {
     super(mensaje);
@@ -18,7 +19,13 @@ export async function api<T>(
 
   const respuesta = await fetch(`${base.replace(/\/$/, '')}${ruta}`, {
     method: opciones.metodo,
-    headers: { 'Content-Type': 'application/json' },
+        headers: {
+      'Content-Type': 'application/json',
+      // Si hay sesión, se manda el token para las rutas privadas
+      ...(typeof window !== 'undefined' && obtenerToken()
+        ? { Authorization: `Bearer ${obtenerToken()}` }
+        : {}),
+    },
     body: opciones.cuerpo === undefined ? undefined : JSON.stringify(opciones.cuerpo),
   });
 

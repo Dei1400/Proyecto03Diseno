@@ -1,3 +1,4 @@
+import { api } from './api';
 export interface BoletoVista {
   id: number;
   descripcion: string;
@@ -15,7 +16,7 @@ export interface BoletoApi extends BoletoVista {
 }
 
 export async function obtenerBoletos(): Promise<BoletoApi[]> {
-  throw new Error('La consulta de boletos aún no está disponible.');
+  return api<BoletoApi[]>('/boletos', { metodo: 'GET' });
 }
 
 export function agruparPorEvento(boletos: BoletoApi[]) {
