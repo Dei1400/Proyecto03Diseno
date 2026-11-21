@@ -151,12 +151,16 @@ export default function PanelAccesibilidad() {
         ref={botonFlotante}
         type="button"
         className="accesibilidad-flotante"
-        aria-label="Abrir opciones de accesibilidad"
+        aria-label={abierto ? 'Cerrar opciones de accesibilidad' : 'Abrir opciones de accesibilidad'}
         aria-haspopup="dialog"
         aria-expanded={abierto}
         onClick={(evento) => {
           origen.current = evento.currentTarget;
-          setAbierto(true);
+          if (abierto) {
+            cerrar();
+          } else {
+            setAbierto(true);
+          }
         }}
       >
         <IconoAccesibilidad />

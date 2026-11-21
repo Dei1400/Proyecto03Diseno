@@ -7,11 +7,13 @@ import './formularios.css';
 export default function LayoutAuth({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Suspense fallback={<header className="encabezado" />}>
-        <HeaderAuth />
-      </Suspense>
-      <main id="contenido">{children}</main>
-      <Footer />
+      <div className="contenido-sitio">
+        <Suspense fallback={<header className="encabezado" />}>
+          <HeaderAuth />
+        </Suspense>
+        <main id="contenido">{children}</main>
+        <Footer />
+      </div>
       <PanelAccesibilidad />
     </>
   );

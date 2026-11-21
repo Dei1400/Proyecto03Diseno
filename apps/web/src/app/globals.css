@@ -91,8 +91,9 @@ html[data-accesibilidad-paleta="oscuro"] .opcion-accesibilidad:not(.opcion-acces
 html[data-accesibilidad-contraste="true"]{--tinta:#000;--tinta-suave:#202020;--borde:#333;--primario:#003f9e;--fondo:#fff;--superficie:#fff}
 html[data-accesibilidad-contraste="true"] :is(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:4px solid #ff7a00;outline-offset:3px}
 html[data-accesibilidad-enlaces="true"] a{text-decoration:underline!important;text-underline-offset:3px}
-html[data-accesibilidad-invertir="true"] body{filter:invert(1) hue-rotate(180deg)}
-html[data-accesibilidad-invertir="true"] :is(img,video,iframe){filter:invert(1) hue-rotate(180deg)}
+html[data-accesibilidad-invertir="true"] .contenido-sitio{min-height:100vh;background:var(--fondo);filter:invert(1) hue-rotate(180deg)}
+html[data-accesibilidad-invertir="true"] :is(.saltar,.panel-accesibilidad,.accesibilidad-flotante){filter:invert(1) hue-rotate(180deg)}
+html[data-accesibilidad-invertir="true"] .contenido-sitio :is(img,video,iframe){filter:invert(1) hue-rotate(180deg)}
 html[data-accesibilidad-texto="grande"]{zoom:1.12}
 html[data-accesibilidad-texto="muy-grande"]{zoom:1.25}
 html[data-accesibilidad-movimiento="true"] *,html[data-accesibilidad-movimiento="true"] *::before,html[data-accesibilidad-movimiento="true"] *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
