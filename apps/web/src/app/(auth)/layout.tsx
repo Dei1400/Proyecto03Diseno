@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import HeaderAuth from '@/components/HeaderAuth';
 import Footer from '@/components/Footer';
+import PanelAccesibilidad from '@/components/PanelAccesibilidad';
 import './formularios.css';
 
 export default function LayoutAuth({ children }: { children: React.ReactNode }) {
@@ -11,6 +12,7 @@ export default function LayoutAuth({ children }: { children: React.ReactNode }) 
       </Suspense>
       <main id="contenido">{children}</main>
       <Footer />
+      <PanelAccesibilidad />
     </>
   );
 }

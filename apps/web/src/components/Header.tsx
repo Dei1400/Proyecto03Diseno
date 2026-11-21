@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import AccionesSesion from '@/components/AccionesSesion';
+import BotonAccesibilidad from '@/components/BotonAccesibilidad';
 import { CATEGORIAS } from '@/lib/catalogo';
 
 export { CATEGORIAS } from '@/lib/catalogo';
@@ -15,6 +16,7 @@ export default function Header() {
           <button type="submit" className="btn btn-primario">Buscar</button>
         </form>
         <AccionesSesion />
+        <BotonAccesibilidad />
       </div>
       <nav aria-label="Categorías" className="contenedor categorias">
         {CATEGORIAS.map((c) => (
