@@ -7,6 +7,7 @@ import {
 import { Asiento, EstadoAsiento, EstadoOrden, Prisma } from '@prisma/client';
 import { TIEMPO_MAXIMO_TRANSACCION_MS } from '../prisma/prisma.constants';
 import { PrismaService } from '../prisma/prisma.service';
+import { PublicadorDeEventos } from '../tiempo-real/publicador-de-eventos.service';
 import {
   MAXIMO_BOLETOS_POR_EVENTO,
   MINUTOS_RETENCION,
@@ -16,7 +17,6 @@ import { SeleccionAsientosDto } from './dto/seleccion-asientos.dto';
 
 const UN_MINUTO_EN_MS = 60 * 1000;
 
-// Una acción sobre un asiento (retener, liberar, vender…)
 type AccionAsiento = (asiento: ContextoAsiento) => void;
 
 export interface ResultadoAsiento {
@@ -27,13 +27,16 @@ export interface ResultadoAsiento {
 
 @Injectable()
 export class AsientosService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly publicador: PublicadorDeEventos,
+  ) {}
 
   // Apartar asientos por 10 minutos
-  retener(usuarioId: number, datos: SeleccionAsientosDto) {
+  async retener(usuarioId: number, datos: SeleccionAsientosDto) {
     const hasta = new Date(Date.now() + MINUTOS_RETENCION * UN_MINUTO_EN_MS);
 
-    return this.prisma.$transaction(
+    const resultado = await this.prisma.$transaction(
       async (tx) => {
         await this.verificarMaximo(tx, usuarioId, datos);
         const asientos = await this.aplicar(tx, datos, (asiento) =>
@@ -43,21 +46,24 @@ export class AsientosService {
       },
       { timeout: TIEMPO_MAXIMO_TRANSACCION_MS },
     );
+
+    // Observer: ya se guardó, ahora se avisa a los que miran el mapa
+    this.publicador.notificar({ eventoId: datos.eventoId, asientos: resultado.asientos });
+    return resultado;
   }
 
   // Devuelve los asientos para que otra persona los pueda tomar
-  liberar(usuarioId: number, datos: SeleccionAsientosDto) {
-    return this.prisma.$transaction(
-      async (tx) => ({
-        asientos: await this.aplicar(tx, datos, (asiento) =>
-          asiento.liberar(usuarioId),
-        ),
-      }),
+  async liberar(usuarioId: number, datos: SeleccionAsientosDto) {
+    const asientos = await this.prisma.$transaction(
+      (tx) => this.aplicar(tx, datos, (asiento) => asiento.liberar(usuarioId)),
       { timeout: TIEMPO_MAXIMO_TRANSACCION_MS },
     );
+
+    this.publicador.notificar({ eventoId: datos.eventoId, asientos });
+    return { asientos };
   }
 
-  // vende los asientos de la orden (patrón State)
+  // La usa el módulo de órdenes al pagar: vende los asientos de la orden
   async venderDeOrden(
     tx: Prisma.TransactionClient,
     ordenId: number,
@@ -92,6 +98,7 @@ export class AsientosService {
       const asiento = new ContextoAsiento(registro);
       accion(asiento); // patrón State: si no se puede, la clase del estado lanza el error
 
+      // Se guarda solo si nadie cambió el asiento desde que se leyó
       const { count } = await tx.asiento.updateMany({
         where: {
           id: registro.id,
@@ -116,7 +123,7 @@ export class AsientosService {
     return resultado;
   }
 
-  // Máximo 6 boletos por persona en cada evento
+  // Máximo 6 boletos por persona en cada evento 
   private async verificarMaximo(
     tx: Prisma.TransactionClient,
     usuarioId: number,
@@ -144,7 +151,7 @@ export class AsientosService {
     }
   }
 
-  // La hora en que vence el primer asiento apartado (para el temporizador)
+  // La hora en que vence el primer asiento apartado
   private primeroEnVencer(asientos: ResultadoAsiento[]): Date | null {
     const horas = asientos
       .map((asiento) => asiento.vencenEn)

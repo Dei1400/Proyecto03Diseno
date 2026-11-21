@@ -15,6 +15,7 @@ import type { ResultadoPago } from '../pagos/estrategias/estrategia-pago';
 import { ProcesadorPagos } from '../pagos/procesador-pagos.service';
 import { TIEMPO_MAXIMO_TRANSACCION_MS } from '../prisma/prisma.constants';
 import { PrismaService } from '../prisma/prisma.service';
+import { PublicadorDeEventos } from '../tiempo-real/publicador-de-eventos.service';
 import { CrearOrdenDto } from './dto/crear-orden.dto';
 import { PagarOrdenDto } from './dto/pagar-orden.dto';
 
@@ -32,6 +33,7 @@ export class OrdenesService {
     private readonly calculadora: CalculadoraPrecioService,
     private readonly asientos: AsientosService,
     private readonly procesador: ProcesadorPagos,
+    private readonly publicador: PublicadorDeEventos,
   ) {}
 
   // Crea la orden con los asientos apartados y su desglose
@@ -94,7 +96,7 @@ export class OrdenesService {
     );
   }
 
-  // Realiza el pago simulado con el método que elija la persona (patrón Strategy)
+  // pago simulado con el método que elija la persona 
   async pagar(usuarioId: number, ordenId: number, datos: PagarOrdenDto) {
     const orden = await this.buscarPendiente(usuarioId, ordenId);
     const resultado = this.procesador.procesar(datos.metodo, orden, datos);
@@ -102,10 +104,19 @@ export class OrdenesService {
     if (resultado.estado === 'RECHAZADO') {
       throw new HttpException(resultado.mensaje, HttpStatus.PAYMENT_REQUIRED);
     }
-    return this.completar(usuarioId, orden, datos.metodo, resultado);
+    const { pagada, vendidos } = await this.completar(
+      usuarioId,
+      orden,
+      datos.metodo,
+      resultado,
+    );
+
+    // Observer: la compra ya quedó guardada, ahora se avisa
+    this.publicador.notificar({ eventoId: orden.eventoId, asientos: vendidos });
+    return { orden: pagada, pago: resultado, boletos: vendidos.length };
   }
 
-  // obtener el historial de compras
+  // historial de compras
   historial(usuarioId: number) {
     return this.prisma.orden.findMany({
       where: { usuarioId },
@@ -117,7 +128,7 @@ export class OrdenesService {
     });
   }
 
-  // Pago aprobado
+  // Pago aprobados
   private completar(
     usuarioId: number,
     orden: Orden,
@@ -143,7 +154,7 @@ export class OrdenesService {
             ultimos4: resultado.ultimos4 ?? null,
           },
         });
-        return { orden: pagada, pago: resultado, boletos: vendidos.length };
+        return { pagada, vendidos };
       },
       { timeout: TIEMPO_MAXIMO_TRANSACCION_MS },
     );
@@ -160,7 +171,7 @@ export class OrdenesService {
     return orden;
   }
 
-  // para suma el desglose de cada asiento
+  // Suma el desglose de cada asiento
   private sumar(desgloses: DesglosePrecio[]): DesglosePrecio {
     return desgloses.reduce(
       (suma, d) => ({
