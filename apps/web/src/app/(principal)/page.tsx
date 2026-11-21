@@ -11,6 +11,9 @@ async function ContenidoInicio({ searchParams }: { searchParams: Promise<Params>
   const params = await searchParams;
   const valor = Array.isArray(params.categoria) ? params.categoria[0] : params.categoria;
   const categoria = CATEGORIAS.find((c) => c === valor);
+  if (categoria === 'Humor') {
+    return <p className="contenedor seccion" role="status">La categoría Humor aún no está disponible en el API. <Link href="/">Ver todos los eventos</Link></p>;
+  }
   const eventos = await obtenerEventos({ categoria });
   const destacado = eventos.find((e) => e.destacado) ?? eventos[0];
 
