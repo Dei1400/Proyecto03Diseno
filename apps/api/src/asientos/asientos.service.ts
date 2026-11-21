@@ -1,0 +1,163 @@
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { Asiento, EstadoAsiento, EstadoOrden, Prisma } from '@prisma/client';
+import { TIEMPO_MAXIMO_TRANSACCION_MS } from '../prisma/prisma.constants';
+import { PrismaService } from '../prisma/prisma.service';
+import { PublicadorDeEventos } from '../tiempo-real/publicador-de-eventos.service';
+import {
+  MAXIMO_BOLETOS_POR_EVENTO,
+  MINUTOS_RETENCION,
+} from './asientos.constants';
+import { ContextoAsiento } from './contexto-asiento';
+import { SeleccionAsientosDto } from './dto/seleccion-asientos.dto';
+
+const UN_MINUTO_EN_MS = 60 * 1000;
+
+type AccionAsiento = (asiento: ContextoAsiento) => void;
+
+export interface ResultadoAsiento {
+  id: number;
+  estado: EstadoAsiento;
+  vencenEn: Date | null;
+}
+
+@Injectable()
+export class AsientosService {
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly publicador: PublicadorDeEventos,
+  ) {}
+
+  // Apartar asientos por 10 minutos
+  async retener(usuarioId: number, datos: SeleccionAsientosDto) {
+    const hasta = new Date(Date.now() + MINUTOS_RETENCION * UN_MINUTO_EN_MS);
+
+    const resultado = await this.prisma.$transaction(
+      async (tx) => {
+        await this.verificarMaximo(tx, usuarioId, datos);
+        const asientos = await this.aplicar(tx, datos, (asiento) =>
+          asiento.retener(usuarioId, hasta),
+        );
+        return { asientos, vencenEn: this.primeroEnVencer(asientos) };
+      },
+      { timeout: TIEMPO_MAXIMO_TRANSACCION_MS },
+    );
+
+    // Observer: ya se guardó, ahora se avisa a los que miran el mapa
+    this.publicador.notificar({ eventoId: datos.eventoId, asientos: resultado.asientos });
+    return resultado;
+  }
+
+  // Devuelve los asientos para que otra persona los pueda tomar
+  async liberar(usuarioId: number, datos: SeleccionAsientosDto) {
+    const asientos = await this.prisma.$transaction(
+      (tx) => this.aplicar(tx, datos, (asiento) => asiento.liberar(usuarioId)),
+      { timeout: TIEMPO_MAXIMO_TRANSACCION_MS },
+    );
+
+    this.publicador.notificar({ eventoId: datos.eventoId, asientos });
+    return { asientos };
+  }
+
+  // La usa el módulo de órdenes al pagar: vende los asientos de la orden
+  async venderDeOrden(
+    tx: Prisma.TransactionClient,
+    ordenId: number,
+    usuarioId: number,
+  ): Promise<ResultadoAsiento[]> {
+    const registros = await tx.asiento.findMany({ where: { ordenId } });
+    return this.guardarCada(tx, registros, (asiento) => asiento.vender(usuarioId));
+  }
+
+  private async aplicar(
+    tx: Prisma.TransactionClient,
+    datos: SeleccionAsientosDto,
+    accion: AccionAsiento,
+  ): Promise<ResultadoAsiento[]> {
+    const registros = await tx.asiento.findMany({
+      where: { id: { in: datos.asientoIds }, zona: { eventoId: datos.eventoId } },
+    });
+    if (registros.length !== datos.asientoIds.length) {
+      throw new NotFoundException('Alguno de los asientos no existe en este evento');
+    }
+    return this.guardarCada(tx, registros, accion);
+  }
+
+  // Aplica la acción a cada asiento y la guarda
+  private async guardarCada(
+    tx: Prisma.TransactionClient,
+    registros: Asiento[],
+    accion: AccionAsiento,
+  ): Promise<ResultadoAsiento[]> {
+    const resultado: ResultadoAsiento[] = [];
+    for (const registro of registros) {
+      const asiento = new ContextoAsiento(registro);
+      accion(asiento); // patrón State: si no se puede, la clase del estado lanza el error
+
+      // Se guarda solo si nadie cambió el asiento desde que se leyó
+      const { count } = await tx.asiento.updateMany({
+        where: {
+          id: registro.id,
+          estado: registro.estado,
+          retenidoPorId: registro.retenidoPorId,
+          retenidoHasta: registro.retenidoHasta,
+        },
+        data: asiento.datosParaGuardar(),
+      });
+      if (count === 0) {
+        throw new ConflictException(
+          'Otra persona acaba de tomar uno de los asientos. Elige otro.',
+        );
+      }
+
+      resultado.push({
+        id: asiento.id,
+        estado: asiento.estadoActual,
+        vencenEn: asiento.retenidoHasta,
+      });
+    }
+    return resultado;
+  }
+
+  // Máximo 6 boletos por persona en cada evento 
+  private async verificarMaximo(
+    tx: Prisma.TransactionClient,
+    usuarioId: number,
+    datos: SeleccionAsientosDto,
+  ) {
+    const apartados = await tx.asiento.count({
+      where: {
+        zona: { eventoId: datos.eventoId },
+        estado: EstadoAsiento.RETENIDO,
+        retenidoPorId: usuarioId,
+        retenidoHasta: { gt: new Date() },
+        id: { notIn: datos.asientoIds },
+      },
+    });
+    const comprados = await tx.boleto.count({
+      where: {
+        orden: { usuarioId, eventoId: datos.eventoId, estado: EstadoOrden.PAGADA },
+      },
+    });
+
+    if (apartados + comprados + datos.asientoIds.length > MAXIMO_BOLETOS_POR_EVENTO) {
+      throw new BadRequestException(
+        `Puedes tener como máximo ${MAXIMO_BOLETOS_POR_EVENTO} boletos en este evento`,
+      );
+    }
+  }
+
+  // La hora en que vence el primer asiento apartado
+  private primeroEnVencer(asientos: ResultadoAsiento[]): Date | null {
+    const horas = asientos
+      .map((asiento) => asiento.vencenEn)
+      .filter((hora): hora is Date => hora !== null);
+    return horas.length > 0
+      ? new Date(Math.min(...horas.map((hora) => hora.getTime())))
+      : null;
+  }
+}
