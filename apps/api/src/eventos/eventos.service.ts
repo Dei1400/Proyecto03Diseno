@@ -105,12 +105,19 @@ export class EventosService {
       nombre: zona.nombre,
       precioFinal: this.calculadora.calcular(zona.precio).total,
       // El estado lo decide el asiento (patrón State): una retención vencida sale como disponible
-      asientos: zona.asientos.map((asiento) => ({
-        id: asiento.id,
-        fila: asiento.fila,
-        numero: asiento.numero,
-        estado: new ContextoAsiento(asiento).estadoActual,
-      })),
+            asientos: zona.asientos.map((asiento) => {
+        // El estado lo decide el asiento, una retención vencida sale como disponible
+        const contexto = new ContextoAsiento(asiento);
+        return {
+          id: asiento.id,
+          fila: asiento.fila,
+          numero: asiento.numero,
+          estado: contexto.estadoActual,
+          // Así la página reconoce los asientos que apartó la misma persona
+          retenidoPorId: contexto.retenidoPorId,
+          retenidoHasta: contexto.retenidoHasta,
+        };
+      }),
     }));
   }
 

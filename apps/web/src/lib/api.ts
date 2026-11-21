@@ -1,5 +1,8 @@
 import { obtenerToken } from './sesion';
 
+// por el plan gratis de render
+const ESPERA_MAXIMA_MS = 60 * 1000;
+
 export class ErrorApi extends Error {
   constructor(public readonly estado: number, mensaje: string) {
     super(mensaje);
@@ -7,13 +10,18 @@ export class ErrorApi extends Error {
   }
 }
 
+// la variable de entorno o, en desarrollo, el API local
+export function direccionApi(): string | undefined {
+  const base = process.env.NEXT_PUBLIC_API_URL
+    || (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined);
+  return base?.replace(/\/$/, '');
+}
+
 export async function api<T>(
   ruta: string,
   opciones: { metodo: string; cuerpo?: unknown; autenticado?: boolean },
 ): Promise<T> {
-  const base = process.env.NEXT_PUBLIC_API_URL
-    || (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined);
-
+  const base = direccionApi();
   if (!base) {
     throw new Error('Configura NEXT_PUBLIC_API_URL para conectar con el servidor.');
   }
@@ -23,7 +31,7 @@ export async function api<T>(
 
   let respuesta: Response;
   try {
-    respuesta = await fetch(`${base.replace(/\/$/, '')}${ruta}`, {
+    respuesta = await fetch(`${base}${ruta}`, {
       method: opciones.metodo,
       headers: {
         ...(opciones.cuerpo === undefined ? {} : { 'Content-Type': 'application/json' }),
@@ -31,7 +39,7 @@ export async function api<T>(
       },
       body: opciones.cuerpo === undefined ? undefined : JSON.stringify(opciones.cuerpo),
       cache: 'no-store',
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(ESPERA_MAXIMA_MS),
     });
   } catch (error) {
     console.error('No se pudo conectar con el API.', error);

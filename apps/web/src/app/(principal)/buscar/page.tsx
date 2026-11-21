@@ -54,7 +54,7 @@ async function Resultados({ searchParams }: { searchParams: Promise<Params> }) {
       eventos = ordenar(await obtenerEventos(filtros), orden);
     } catch (error) {
       console.error('No se pudieron cargar los resultados de búsqueda.', error);
-      return <p role="alert">{filtros.categoria === 'Humor' ? 'La categoría Humor aún no está disponible en el API.' : 'No pudimos cargar los eventos. Inténtalo de nuevo más tarde.'}</p>;
+      return <p role="alert">No pudimos cargar los eventos. Inténtalo de nuevo más tarde.</p>;
     }
   }
   const cantidad = eventos.length;

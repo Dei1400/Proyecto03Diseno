@@ -16,7 +16,7 @@ export const PROVINCIAS_API = {
   Limón: 'LIMON',
 } as const;
 
-export const CATEGORIAS = [...Object.keys(CATEGORIAS_API) as (keyof typeof CATEGORIAS_API)[], 'Humor'] as const;
+export const CATEGORIAS = Object.keys(CATEGORIAS_API) as (keyof typeof CATEGORIAS_API)[];
 export type Categoria = (typeof CATEGORIAS)[number];
 export type Provincia = keyof typeof PROVINCIAS_API;
 export const PROVINCIAS = Object.keys(PROVINCIAS_API) as Provincia[];

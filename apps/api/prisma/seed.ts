@@ -11,90 +11,112 @@ import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-// Contraseña de los usuarios de prueba (anotarla en el README)
+// Contraseña de los usuarios de prueba 
 const CONTRASENA_DEMO = 'AlexaDeilyn2026';
 
-// Mismos porcentajes que usará CalculadoraPrecio (RN-05)
+// Mismos porcentajes que usa CalculadoraPrecio 
 const CARGO_SERVICIO = 0.08;
 const IMPUESTOS = 0.13 + 0.06 + 0.05; // IVA + espectáculos + municipal
 
+// Cada zona cuesta el precio base del evento por su factor
 const ZONAS = [
-  { nombre: 'VIP', precio: 60000, filas: ['A', 'B'] },
-  { nombre: 'Platea', precio: 35000, filas: ['C', 'D'] },
-  { nombre: 'General', precio: 20000, filas: ['E'] },
+  { nombre: 'VIP', factor: 2.5, filas: ['A', 'B'] },
+  { nombre: 'Platea', factor: 1.5, filas: ['C', 'D'] },
+  { nombre: 'General', factor: 1, filas: ['E'] },
 ];
 const ASIENTOS_POR_FILA = 8; // 5 filas x 8 = 40 asientos por evento
 
+// Precio base (sin impuestos) de la zona General
+const PRECIO_ALTO = 18940; // precio final: 25 000
+const PRECIO_NORMAL = 12500; // precio final: 16 500
+
+// Los mismos eventos e imágenes del diseño de la web (apps/web/public)
 const EVENTOS = [
   {
-    nombre: 'Noche de Rock Nacional',
-    artista: 'Varios artistas',
-    descripcion: 'Las mejores bandas de rock costarricense en una sola noche.',
-    categoria: Categoria.CONCIERTO,
-    provincia: Provincia.SAN_JOSE,
-    lugar: 'Estadio Nacional, La Sabana',
-    dias: 20,
-    destacado: true,
-    factor: 1,
-    clasificacionEdad: '+12',
+    nombre: 'Noche de Rock Nacional', artista: 'Varios artistas',
+    descripcion: 'Las bandas de rock costarricense más conocidas en una sola noche.',
+    categoria: Categoria.CONCIERTO, provincia: Provincia.SAN_JOSE, lugar: 'Anfiteatro Central',
+    fechaHora: '2026-12-12T19:00:00-06:00', imagen: '/rock.jpg',
+    destacado: true, precio: PRECIO_ALTO, clasificacionEdad: '+12',
   },
   {
-    nombre: 'El Lago de los Cisnes',
-    artista: 'Compañía de Danza Aurora',
-    descripcion: 'El ballet clásico en una puesta en escena para toda la familia.',
-    categoria: Categoria.TEATRO,
-    provincia: Provincia.SAN_JOSE,
-    lugar: 'Teatro Nacional',
-    dias: 35,
-    destacado: false,
-    factor: 0.8,
-    clasificacionEdad: 'Todo público',
+    nombre: 'Festival Pura Vida', artista: 'Varios artistas',
+    descripcion: 'Un día de música, comida y cultura costarricense al aire libre.',
+    categoria: Categoria.FESTIVAL, provincia: Provincia.HEREDIA, lugar: 'Parque Central',
+    fechaHora: '2026-12-20T15:00:00-06:00', imagen: '/puravidafes.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
   },
   {
-    nombre: 'Festival del Pacífico',
-    artista: 'Varios artistas',
-    descripcion: 'Dos escenarios de música electrónica y latina frente al mar.',
-    categoria: Categoria.FESTIVAL,
-    provincia: Provincia.PUNTARENAS,
-    lugar: 'Playa Jacó',
-    dias: 50,
-    destacado: true,
-    factor: 1.2,
-    clasificacionEdad: '+18',
+    nombre: 'Gala de Orquesta Sinfónica', artista: 'Orquesta Sinfónica',
+    descripcion: 'Una gala con obras clásicas interpretadas por la orquesta completa.',
+    categoria: Categoria.TEATRO, provincia: Provincia.SAN_JOSE, lugar: 'Teatro Principal',
+    fechaHora: '2027-01-09T19:30:00-06:00', imagen: '/orquesta.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
   },
   {
-    nombre: 'Final de Fútbol Sala',
-    artista: 'Heredia vs. Cartago',
-    descripcion: 'La gran final del torneo nacional de fútbol sala.',
-    categoria: Categoria.DEPORTE,
-    provincia: Provincia.HEREDIA,
-    lugar: 'Palacio de los Deportes',
-    dias: 12,
-    destacado: false,
-    factor: 0.6,
-    clasificacionEdad: 'Todo público',
+    nombre: 'Stand-up en el Valle', artista: 'Comediantes nacionales',
+    descripcion: 'Una noche de comedia en vivo con humoristas costarricenses.',
+    categoria: Categoria.TEATRO, provincia: Provincia.CARTAGO, lugar: 'Centro de Eventos',
+    fechaHora: '2027-01-23T20:00:00-06:00', imagen: '/standup.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: '+18',
   },
   {
-    nombre: 'Magia para la Familia',
-    artista: 'El Mago Tavo',
-    descripcion: 'Un show de magia e ilusionismo para grandes y pequeños.',
-    categoria: Categoria.FAMILIAR,
-    provincia: Provincia.ALAJUELA,
-    lugar: 'Teatro Municipal de Alajuela',
-    dias: 15,
-    destacado: false,
-    factor: 0.5,
-    clasificacionEdad: 'Todo público',
+    nombre: 'Tarde de Música Latina', artista: 'Varios artistas',
+    descripcion: 'Salsa, merengue y cumbia para bailar toda la tarde.',
+    categoria: Categoria.CONCIERTO, provincia: Provincia.ALAJUELA, lugar: 'Plaza Mayor',
+    fechaHora: '2027-02-06T17:00:00-06:00', imagen: '/festivallatino.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
+  },
+  {
+    nombre: 'Festival de Sabores del Pacífico', artista: 'Cocineros del Pacífico',
+    descripcion: 'Comida típica, música en vivo y actividades para toda la familia.',
+    categoria: Categoria.FESTIVAL, provincia: Provincia.PUNTARENAS, lugar: 'Paseo Costero',
+    fechaHora: '2027-02-13T14:00:00-06:00', imagen: '/festivalcomida.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
+  },
+  {
+    nombre: 'Noche de Jazz bajo las Estrellas', artista: 'Ensamble de jazz',
+    descripcion: 'Jazz en vivo al aire libre en una noche guanacasteca.',
+    categoria: Categoria.CONCIERTO, provincia: Provincia.GUANACASTE, lugar: 'Anfiteatro del Sol',
+    fechaHora: '2027-02-20T19:00:00-06:00', imagen: '/jazz.jpg',
+    destacado: false, precio: PRECIO_ALTO, clasificacionEdad: '+12',
+  },
+  {
+    nombre: 'Aventura en Familia', artista: 'Grupo de animación',
+    descripcion: 'Juegos, música y teatro para niños y familias.',
+    categoria: Categoria.FAMILIAR, provincia: Provincia.HEREDIA, lugar: 'Parque de los Encuentros',
+    fechaHora: '2027-02-28T10:00:00-06:00', imagen: '/aventurafamilia.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
+  },
+  {
+    nombre: 'Copa de Baloncesto Nacional', artista: 'Final del torneo nacional',
+    descripcion: 'La gran final del torneo nacional de baloncesto.',
+    categoria: Categoria.DEPORTE, provincia: Provincia.SAN_JOSE, lugar: 'Gimnasio Central',
+    fechaHora: '2027-03-06T16:00:00-06:00', imagen: '/baloncesto.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
+  },
+  {
+    nombre: 'Historias del Bosque', artista: 'Compañía de teatro',
+    descripcion: 'Una obra sobre la naturaleza para toda la familia.',
+    categoria: Categoria.TEATRO, provincia: Provincia.CARTAGO, lugar: 'Teatro del Valle',
+    fechaHora: '2027-03-13T18:00:00-06:00', imagen: '/teatro.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
+  },
+  {
+    nombre: 'Ritmos del Caribe', artista: 'Varios artistas',
+    descripcion: 'Calipso, reggae y música caribeña frente al mar.',
+    categoria: Categoria.FESTIVAL, provincia: Provincia.LIMON, lugar: 'Plaza del Caribe',
+    fechaHora: '2027-03-20T15:00:00-06:00', imagen: '/ritmocaribe.jpg',
+    destacado: false, precio: PRECIO_ALTO, clasificacionEdad: 'Todo público',
+  },
+  {
+    nombre: 'Encuentro de Música Acústica', artista: 'Varios artistas',
+    descripcion: 'Artistas nacionales en formato acústico, al aire libre.',
+    categoria: Categoria.CONCIERTO, provincia: Provincia.ALAJUELA, lugar: 'Jardín Cultural',
+    fechaHora: '2027-03-27T18:30:00-06:00', imagen: '/muiscaacustica.jpg',
+    destacado: false, precio: PRECIO_NORMAL, clasificacionEdad: 'Todo público',
   },
 ];
-
-// Fecha dentro de N días a las 8:00 p. m. de Costa Rica (UTC-6)
-function fechaEnDias(dias: number, hora = 20): Date {
-  const fecha = new Date();
-  fecha.setUTCDate(fecha.getUTCDate() + dias);
-  fecha.setUTCHours(hora + 6, 0, 0, 0);
-  return fecha;
-}
 
 async function main() {
   // Borra todo en orden (por las relaciones) para poder correrlo varias veces
@@ -138,14 +160,14 @@ async function main() {
         categoria: e.categoria,
         provincia: e.provincia,
         lugar: e.lugar,
-        fechaHora: fechaEnDias(e.dias),
-        imagenUrl: `https://picsum.photos/seed/queplan-${i + 1}/1200/600`,
+        fechaHora: new Date(e.fechaHora),
+        imagenUrl: e.imagen, // imagen de apps/web/public
         clasificacionEdad: e.clasificacionEdad,
         destacado: e.destacado,
         zonas: {
           create: ZONAS.map((z) => ({
             nombre: z.nombre,
-            precio: Math.round((z.precio * e.factor) / 500) * 500,
+            precio: Math.round(e.precio * z.factor),
             asientos: {
               create: z.filas.flatMap((fila) =>
                 Array.from({ length: ASIENTOS_POR_FILA }, (_, n) => ({
@@ -167,7 +189,7 @@ async function main() {
       data: { estado: EstadoAsiento.BLOQUEADO },
     });
 
-    // Una compra pagada en el primer evento, para que haya boletos y ventas
+    // Una compra pagada en el primer evento, para que haya boletos de ejemplo
     if (i === 0) {
       const platea = evento.zonas.find((z) => z.nombre === 'Platea')!;
       const vendidos = platea.asientos.filter(
