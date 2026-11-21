@@ -28,7 +28,6 @@ export function nombreDeCodigo<T extends string>(mapa: Record<T, string>, codigo
 }
 
 export async function obtenerEventos(filtros: Filtros = {}): Promise<EventoResumen[]> {
-  if (filtros.categoria === 'Humor') throw new Error('La categoría Humor aún no está disponible en el API.');
   const params = new URLSearchParams();
   if (filtros.q) params.set('q', filtros.q);
   if (filtros.categoria) params.set('categoria', CATEGORIAS_API[filtros.categoria]);
