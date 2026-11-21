@@ -23,7 +23,7 @@ export default function EventCard({ evento, indice }: { evento: EventoResumen; i
           {fecha(evento.fechaHora)} · {evento.provincia}
         </p>
         <p style={{ margin: '8px 0 14px', fontWeight: 600 }}>
-          Desde {colones(evento.precioDesde)} <span style={{ fontWeight: 400, color: 'var(--tinta-suave)' }}>precio final</span>
+          {evento.precioDesde === null ? 'Precio no disponible' : <>Desde {colones(evento.precioDesde)} <span style={{ fontWeight: 400, color: 'var(--tinta-suave)' }}>precio final</span></>}
         </p>
         <Link href={`/eventos/${evento.id}`} className="btn btn-borde" aria-label={`Ver entradas de ${evento.nombre}`}>
           Ver entradas

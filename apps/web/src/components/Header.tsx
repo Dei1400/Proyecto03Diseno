@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import { CATEGORIAS } from '@/lib/catalogo';
 
-export const CATEGORIAS = ['Conciertos', 'Teatro', 'Deportes', 'Festivales', 'Familia'];
+export { CATEGORIAS } from '@/lib/catalogo';
 
 export default function Header() {
   return (
@@ -17,7 +18,7 @@ export default function Header() {
       </div>
       <nav aria-label="Categorías" className="contenedor categorias">
         {CATEGORIAS.map((c) => (
-          <Link key={c} href={`/categoria/${encodeURIComponent(c.toLowerCase())}`} className="chip">{c}</Link>
+          <Link key={c} href={`/?categoria=${encodeURIComponent(c)}#prox`} className="chip">{c}</Link>
         ))}
       </nav>
     </header>
