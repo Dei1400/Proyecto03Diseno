@@ -6,6 +6,7 @@ import { AsientosModule } from './asientos/asientos.module';
 import { AuthModule } from './auth/auth.module';
 import { EventosModule } from './eventos/eventos.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { OrdenesModule } from './ordenes/ordenes.module';
 import { SaludController } from './salud/salud.controller';
 
 @Module({
@@ -15,6 +16,7 @@ import { SaludController } from './salud/salud.controller';
     AuthModule,
     EventosModule,
     AsientosModule,
+    OrdenesModule,
   ],
   controllers: [AppController, SaludController],
   providers: [AppService],

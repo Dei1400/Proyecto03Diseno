@@ -25,7 +25,7 @@ export class Disponible implements EstadoDelAsiento {
   }
 
   vender() {
-    throw new ConflictException('Primero hay que apartar el asiento');
+    throw new ConflictException('Este asiento ya no está apartado: se acabó el tiempo. Elige tus asientos de nuevo.');
   }
 
   bloquear(asiento: ContextoAsiento) {

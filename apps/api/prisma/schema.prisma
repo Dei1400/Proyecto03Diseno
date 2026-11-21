@@ -30,7 +30,6 @@ enum EstadoOrden {
 // Una estrategia por método (patrón Strategy)
 enum MetodoPago {
   TARJETA
-  SINPE
   CUOTAS
 }
 
